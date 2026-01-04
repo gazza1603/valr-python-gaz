@@ -370,6 +370,17 @@ class MethodClientABC(BaseClientABC, metaclass=ABCMeta):
         """
         return self._do('GET', f'/v1/wallet/crypto/{currency_code}/withdraw/{withdraw_id}',
                         is_authenticated=True, subaccount_id=subaccount_id)
+        
+    @requires_authentication
+    def post_crypto_withdrawal_id(self, currency_code: str, amount: Union[Decimal, str],
+                               id: str, subaccount_id: str = '') -> Dict:
+        """Makes a call to POST https://api.valr.com/v1/wallet/crypto/:currencyCode/withdraw
+
+        Withdraw cryptocurrency funds to an address.
+        """
+        data = {"amount": amount, "addressBookId": id, "allowBorrow": False}
+        return self._do('POST', f'/v1/wallet/crypto/{currency_code}/withdraw', data=data,
+                        is_authenticated=True, subaccount_id=subaccount_id)
 
     @requires_authentication
     def get_deposit_history(self, currency_code: str, skip: Optional[int] = None, limit: Optional[int] = 100,
